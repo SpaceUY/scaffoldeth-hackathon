@@ -57,7 +57,7 @@ contract GalacticMarbles is ERC20, Ownable {
 
     function addBoon() private {
         boonsBanes[raceCount].push(BoonOrBane({
-            affectedMarble: 0,
+            affectedMarble: 99,
             rolls: getRandomNumber(nonce, 10),
             strength: getRandomNumber(nonce + 1, 100),
             isBoon: true
@@ -67,7 +67,7 @@ contract GalacticMarbles is ERC20, Ownable {
 
     function addBane() private {
         boonsBanes[raceCount].push(BoonOrBane({
-            affectedMarble: 0,
+            affectedMarble: 99,
             rolls: getRandomNumber(nonce, 10),
             strength: getRandomNumber(nonce, 100),
             isBoon: false
