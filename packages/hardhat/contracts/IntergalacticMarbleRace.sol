@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract GalacticMarbles is ERC20, Ownable {
+contract IntergalacticMarbleRace is ERC20, Ownable {
     uint256 private nonce = 0;
 
     struct BoonOrBane {
@@ -144,7 +144,7 @@ contract GalacticMarbles is ERC20, Ownable {
     }
     
     function getRandomNumber(uint256 seed, uint256 maxNumber) internal view returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, msg.sender, seed))) % maxNumber;
+        return uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender, seed))) % maxNumber;
     }
     
     function placeBet(uint256 _raceId, uint256 _marbleIndex, uint256 _amount) external {
