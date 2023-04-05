@@ -1,3 +1,39 @@
+// import Head from "next/head";
+// import Link from "next/link";
+// import type { NextPage } from "next";
+// import Image from 'next/image';
+// import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
+// const Home: NextPage = () => {
+//   return (
+//     <>
+//       <Head>
+//         <title>Marble Race</title>
+//         <meta name="description" content="Created with 🏗 scaffold-eth" />
+//       </Head>
+//       <div className="flex items-center flex-col flex-grow pt-10">
+//         <div className="w-full">
+//           <h1 className="text-center mb-8">
+//             <span className="block text-4xl font-bold">Marble Race</span>
+//           </h1>
+//           <div style={{backgroundImage: `url(/assets/main.png)`, width: "100%", height: "400px", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.8}}></div>
+//         </div>
+//         <div className="flex-grow w-full mt-16 px-8 py-12">
+//           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
+//           <Link
+//             href={"/game"}
+//             className={`hover:bg-secondary hover:shadow-md focus:bg-secondary py-1.5 px-3 text-sm rounded-full gap-2`}
+//           >
+//             <div className="flex flex-col px-10 py-10 text-center items-center max-w-xs rounded-3xl" style={{backgroundColor: "#f5222d", cursor:"pointer"}}>
+//               <span style={{fontSize:"3em", color:"white"}}>Start game</span>
+//             </div>
+//             </Link>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
+// export default Home;
 import Head from "next/head";
 import Link from "next/link";
 import type { NextPage } from "next";
