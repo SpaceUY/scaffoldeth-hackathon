@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import marble2 from "../public/assets/blueball.png";
@@ -6,7 +6,9 @@ import marble1 from "../public/assets/greenball.png";
 import marble3 from "../public/assets/violetball.png";
 import marble4 from "../public/assets/whiteball.png";
 import type { NextPage } from "next";
+import PrepareRace from "~~/components/PrepareRace";
 import Timer from "~~/components/Timer";
+import { useScaffoldContractWrite, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 type marble = {
   name: string;
@@ -16,6 +18,9 @@ type marble = {
 const Game: NextPage = () => {
   const [selected, setSelected] = useState<marble>();
   const [isStarting, setIsStarting] = useState<boolean>();
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [winner, setWinner] = useState<number>();
+  console.log("winner: ", winner);
   const marbles = [
     {
       id: 1,
@@ -68,6 +73,46 @@ const Game: NextPage = () => {
       img: marble2,
     },
   ];
+  // eslint-disable-next-line no-use-before-define
+  const { writeAsync, data } = useScaffoldContractWrite({
+    contractName: "IntergalacticMarbleRace",
+    functionName: "sponsorRace", //prepareRace sponsorRace
+    args: undefined,
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "IntergalacticMarbleRace",
+    eventName: "RaceSponsored",
+    listener: (raceId, raceEndTime, scores, winner) => {
+      console.log(raceId, raceEndTime, scores, winner);
+      setWinner(parseInt(winner._hex, 16));
+    },
+  });
+
+  useEffect(() => {
+    console.log("winner: ", winner);
+  }, [winner]);
+  useEffect(() => {
+    console.log({ data });
+    if (data) {
+      const dataAsync = async () => {
+        const resData = await data.wait();
+        console.log({ resData });
+      };
+      dataAsync();
+    }
+  }, [data]);
+
+  const startRace = async () => {
+    const res = await writeAsync();
+    console.log("res: ", data);
+    console.log({ res });
+  };
+
+  if (!isReady) {
+    return <PrepareRace setIsReady={setIsReady} />;
+  }
+
   return (
     <>
       <Head>
@@ -109,7 +154,7 @@ const Game: NextPage = () => {
 
           {isStarting && (
             <div className="flex flex-col text-center items-center">
-              <Timer />
+              <Timer startingTime={3} colorText="#f5222d" />
             </div>
           )}
 
@@ -124,10 +169,15 @@ const Game: NextPage = () => {
                 cursor: selected ? "pointer" : "not-allowed",
               }}
               onClick={() => {
-                if (selected) setIsStarting(true);
+                if (selected) {
+                  startRace();
+                  setIsStarting(true);
+                }
               }}
             >
-              <span style={{ fontSize: "2.5em", color: "white" }}>Start</span>
+              <span style={{ fontSize: "2.5em", color: "white" }}>
+                <Timer startingTime={60} colorText="white" />
+              </span>
             </div>
           </div>
         </div>
