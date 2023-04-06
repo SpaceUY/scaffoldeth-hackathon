@@ -132,14 +132,27 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
         // Determine the winner
         uint256 winner;
         uint256 highestScore = 0;
-        
-        // TODO: HANDLE DRAW
+        uint256 numWinners = 0;
+        uint256[] memory highestScoringMarbles = new uint256[](10); // Keep track of the highest-scoring marbles
+
         for (uint256 i = 0; i < 10; i++) {
             if (currentRace.marbles[i] > highestScore) {
                 highestScore = currentRace.marbles[i];
                 winner = i;
+                numWinners = 1;
+                highestScoringMarbles[0] = i;
+            } else if (currentRace.marbles[i] == highestScore) {
+                highestScoringMarbles[numWinners] = i;
+                numWinners++;
             }
         }
+
+        if (numWinners > 1) {
+            // If there's a draw, select one of the highest-scoring marbles at random
+            uint256 randomIndex = getRandomNumber(nonce, numWinners);
+            winner = highestScoringMarbles[randomIndex];
+        }
+
         currentRace.winningMarbleId = winner;
         
         // Distribute winnings
