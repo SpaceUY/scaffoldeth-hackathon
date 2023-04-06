@@ -1,4 +1,5 @@
 export * from "./useAccountBalance";
+export * from "./useAccountInfo";
 export * from "./useAnimationConfig";
 export * from "./useAutoConnect";
 export * from "./useBurnerWallet";
