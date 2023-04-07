@@ -11,7 +11,6 @@ interface ButtonType {
 }
 
 export const ButtonStartRace = ({ isPrepared, startingTime, setIsPrepared, startRace }: ButtonType) => {
-  console.log("isPrepared: ", isPrepared);
   return (
     <>
       <div
