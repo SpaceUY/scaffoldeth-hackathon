@@ -9,12 +9,9 @@ interface Props {
 }
 
 function Timer({ startingTime, colorText, setIsFinish }: Props) {
-  console.log("startingTime: ", startingTime);
   const [time, setTime] = useState<number>(startingTime);
-  console.log("-time: ", time);
 
   useEffect(() => {
-    console.log("time: ", time);
     const tick = () => {
       setTime(time - 1);
     };

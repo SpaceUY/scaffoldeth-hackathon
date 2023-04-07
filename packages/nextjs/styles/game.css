@@ -3,6 +3,21 @@
     cursor: pointer;
     transition: transform .2s;
 }
+
+.marble-boon {
+    width: 100px;
+    cursor: pointer;
+    transition: transform .2s;
+    box-shadow: 0 0 50px #FF0000;
+    border-radius: 100%;
+}
+
+.marble-bane {
+    width: 50px;
+    cursor: pointer;
+    transition: transform .2s;
+}
+
 .marble:hover, .selected {
     -ms-transform: scale(1.2); /* IE 9 */
     -webkit-transform: scale(1.2); /* Safari 3-8 */

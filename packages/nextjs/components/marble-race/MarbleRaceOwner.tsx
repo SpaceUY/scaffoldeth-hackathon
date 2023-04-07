@@ -18,8 +18,7 @@ export const MarbleRaceOwner = ({ isPrepared, startingTime, isStarting, setIsPre
   });
 
   const startRace = async () => {
-    const res = await writeAsync();
-    console.log("res: ", res);
+    await writeAsync();
   };
 
   return (

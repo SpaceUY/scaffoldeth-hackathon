@@ -79,13 +79,17 @@ export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }
           style={{ padding: "10px 0px" }}
         >
           {marbles.map((marble, index) => (
-            <Image
-              key={index}
-              src={marble.img}
-              alt={`${marble.id}`}
-              className={`${selected?.id === marble.id ? "selected" : ""} ${isStarting ? "fade-out" : ""} marble`}
-              onClick={() => setSelected(marble)}
-            />
+            <div key={index} className="text-center">
+              <div style={{ display: "flex" }} className="justify-center">
+                <span className="mb-2">{marble.name}</span>
+              </div>
+              <Image
+                src={marble.img}
+                alt={`${marble.id}`}
+                className={`${selected?.id === marble.id ? "selected" : ""} ${isStarting ? "fade-out" : ""} marble`}
+                onClick={() => setSelected(marble)}
+              />
+            </div>
           ))}
         </div>
         <div

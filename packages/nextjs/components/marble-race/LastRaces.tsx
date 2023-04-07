@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { marbles } from "~~/utils/marble-race";
@@ -8,10 +8,6 @@ export const LastRaces = () => {
     contractName: "IntergalacticMarbleRace",
     functionName: "getLast10Races",
   });
-
-  useEffect(() => {
-    console.log("last10Races: ", last10Races);
-  }, [last10Races]);
 
   return (
     <>

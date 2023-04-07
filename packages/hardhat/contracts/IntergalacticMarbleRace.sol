@@ -111,6 +111,7 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
         // Apply effects
         for (uint256 i = 0; i < boonsBanes[raceCount].length; i++) {
             uint256 targetMarble = getRandomNumber(nonce, 10);
+            nonce++;
             boonsBanes[raceCount][i].affectedMarble = targetMarble;
 
             uint256 rolls = boonsBanes[raceCount][i].rolls;

@@ -16,6 +16,8 @@ type marble = {
 
 const Game: NextPage = () => {
   const [selected, setSelected] = useState<marble>();
+  const [marblesBoon, setMarblesBoon] = useState<number[]>([]);
+  const [marblesBane, setMarblesBane] = useState<number[]>([]);
   const [isStarting, setIsStarting] = useState<boolean>(false);
   const [startingTime, setStartingTime] = useState<number>(-2);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -43,38 +45,51 @@ const Game: NextPage = () => {
     eventName: "RaceSponsored",
     listener: (raceId, raceEndTime, scores, winner) => {
       setTimeout(() => {
-        console.log("winner: ", winner);
-        setWinner(marbles.find(marble => marble.id === parseInt(winner._hex, 16)));
+        setWinner(marbles.find(marble => marble.id === winner.toNumber()));
         toggle();
-      }, 60000);
+      }, 20000);
     },
   });
 
   useScaffoldEventSubscriber({
     contractName: "IntergalacticMarbleRace",
     eventName: "RacePrepared",
-    listener: (raceId, prepEndTime) => {
-      console.log("prepEndTime: ", prepEndTime);
-      console.log("raceId: ", raceId);
+    listener: () => {
       setIsReady(true);
+    },
+  });
+  useScaffoldEventSubscriber({
+    contractName: "IntergalacticMarbleRace",
+    eventName: "BoonApplied",
+    listener: (raceId, marbleId) => {
+      setMarblesBoon(prevState => {
+        const marbleIDs = [...prevState, marbleId.toNumber()];
+        return marbleIDs;
+      });
+    },
+  });
+  useScaffoldEventSubscriber({
+    contractName: "IntergalacticMarbleRace",
+    eventName: "BaneApplied",
+    listener: (raceId, marbleId) => {
+      setMarblesBane(prevState => {
+        const marbleIDs = [...prevState, marbleId.toNumber()];
+        return marbleIDs;
+      });
     },
   });
 
   useEffect(() => {
-    console.log("account: ", account);
-    console.log("game isOwner: ", isOwner);
     if (account.address && account.isOwner) {
       setIsOwner(account.isOwner);
     } else setIsOwner(false);
   }, [account, isOwner]);
 
   useEffect(() => {
-    console.log("currentRace: ", currentRace);
     if (currentRace && currentRace.endTime.toNumber() * 1000 !== 0) {
       !currentRace?.isCompleted ? setIsReady(true) : null;
       const endTime = new Date(currentRace.endTime.toNumber() * 1000);
       if (endTime > Date.now()) {
-        console.log("prep time ending in:", Math.ceil((endTime - Date.now()) / 1000));
         setStartingTime(Math.ceil((endTime - Date.now()) / 1000));
       } else setStartingTime(-1);
     } else {
@@ -128,13 +143,29 @@ const Game: NextPage = () => {
           {isStarting &&
             marbles.map((marble, index) => (
               <div key={index} className={`${winner && `fade-out`}`}>
-                <Image src={marble.img} alt={`${marble.id}`} className={`marble marble-move-${index}-fade-in `} />
+                <div className={`marble-move-${index}-fade-in `}>
+                  <div style={{ display: "flex" }} className="justify-center">
+                    <span className="mb-2">{marble.name}</span>
+                  </div>
+                  <Image
+                    key={index}
+                    src={marble.img}
+                    alt={`${marble.id}`}
+                    className={` ${
+                      marblesBoon.length > 0 && marblesBoon.filter(id => id === marble.id).length > 0
+                        ? "marble-boon"
+                        : marblesBane.length > 0 && marblesBane.filter(id => id === marble.id).length > 0
+                        ? "marble-bane"
+                        : "marble"
+                    }`}
+                  />
+                </div>
               </div>
             ))}
 
           <Modal isOpen={isOpen} toggle={finishRace} height="50%" width="50%">
             <h1 className="text-center mt-6">
-              <span className="block text-4xl font-bold">WINNER!</span>
+              <span className="block text-4xl font-bold">{`${winner?.name} is the winner!`}</span>
             </h1>
 
             <div className="flex items-center flex-col flex-grow pt-10">

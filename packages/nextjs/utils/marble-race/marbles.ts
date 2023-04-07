@@ -42,7 +42,7 @@ export const marbles = [
   },
   {
     id: 7,
-    name: "Nimbus",
+    name: "Thunder",
     img: marbleSkyBlue,
   },
   {

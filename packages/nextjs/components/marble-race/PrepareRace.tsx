@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Head from "next/head";
 import Modal from "~~/components/Modal";
 import { LastRaces } from "~~/components/marble-race";
@@ -9,7 +9,6 @@ interface Props {
   isOwner: boolean;
 }
 export const PrepareRace = ({ isOwner }: Props) => {
-  console.log("isOwner: ", isOwner);
   const { isOpen, toggle } = useModal();
   const { writeAsync } = useScaffoldContractWrite({
     contractName: "IntergalacticMarbleRace",
@@ -18,13 +17,8 @@ export const PrepareRace = ({ isOwner }: Props) => {
   });
 
   const startRace = async () => {
-    const res = await writeAsync();
-    console.log({ res });
+    await writeAsync();
   };
-
-  useEffect(() => {
-    console.log("entre al comp");
-  }, []);
 
   return (
     <>
