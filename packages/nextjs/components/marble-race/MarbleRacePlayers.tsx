@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Image from "next/image";
-// import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { BigNumber } from "ethers";
 import { IntegerInput } from "~~/components/scaffold-eth";
+import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 type SetStateFunction<T> = React.Dispatch<React.SetStateAction<T>>;
 type marble = {
@@ -20,18 +20,28 @@ interface PlayersType {
 export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }: PlayersType) => {
   const [valueBet, setValueBet] = useState<string | BigNumber>("");
 
-  //   const { writeAsync } = useScaffoldContractWrite({
-  //     contractName: "IntergalacticMarbleRace",
-  //     functionName: "placeBet",
-  //     args: [selected?.id, Ethers.BigNumber.from(valueBet)],
-  //   });
+  const placeBet = useScaffoldContractWrite({
+    contractName: "IntergalacticMarbleRace",
+    functionName: "placeBet",
+    args: [BigNumber.from(selected?.id || 99), BigNumber.from(valueBet || 0)],
+  });
+
+  const getTokens = useScaffoldContractWrite({
+    contractName: "IntergalacticMarbleRace",
+    functionName: "getTokens",
+    args: undefined,
+  });
 
   const handleChange = (newValue: string | BigNumber) => {
     setValueBet(newValue);
   };
 
   const handleBet = async () => {
-    // await writeAsync();
+    await placeBet.writeAsync();
+  };
+
+  const handleGetGALM = async () => {
+    await getTokens.writeAsync();
   };
 
   return (
@@ -74,7 +84,7 @@ export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }
           style={{ padding: "10px 0px" }}
         >
           <div
-            className="flex flex-col px-10 py-7 text-center items-center max-w-xs rounded-3xl"
+            className="flex flex-col px-10 py-3 text-center items-center max-w-xs rounded-3xl"
             style={{
               backgroundColor:
                 valueBet.toString().match(/^\d+(\.\d{1,4})?$/) !== null && selected ? "#f5222d" : "#8c8c8c",
@@ -87,8 +97,22 @@ export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }
             }}
           >
             <span style={{ fontSize: "2.5em", color: "white" }}>
-              <h1 className="block text-4xl font-bold" style={{ color: "white" }}>
+              <h1 className="block text-2xl font-bold" style={{ color: "white" }}>
                 Bet
+              </h1>
+            </span>
+          </div>
+          <div
+            className="flex flex-col px-10 py-3 text-center items-center max-w-xs rounded-3xl"
+            style={{
+              backgroundColor: "lightblue",
+              cursor: "pointer",
+            }}
+            onClick={handleGetGALM}
+          >
+            <span style={{ fontSize: "2.5em", color: "white" }}>
+              <h1 className="block text-2xl font-bold" style={{ color: "white" }}>
+                Get 1000 GALM
               </h1>
             </span>
           </div>
