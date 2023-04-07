@@ -1,4 +1,5 @@
 export * from "./useAccountBalance";
+export * from "./useAccountInfo";
 export * from "./useAnimationConfig";
 export * from "./useAutoConnect";
 export * from "./useBurnerWallet";
@@ -9,4 +10,5 @@ export * from "./useOutsideClick";
 export * from "./useScaffoldContractRead";
 export * from "./useScaffoldContractWrite";
 export * from "./useScaffoldEventSubscriber";
+export * from "./useModal";
 export * from "./useTransactor";
