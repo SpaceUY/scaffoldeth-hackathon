@@ -41,6 +41,7 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
     event BetPlaced(address indexed user, uint256 indexed raceId, uint256 amount, uint256 winner);
     event VoteCast(address indexed user, uint256 indexed raceId);
     event RacePrepared(uint256 indexed raceId, uint256 prepEndTime);
+    event RaceSponsorStarted(uint256 indexed raceId, uint256 raceStartTime);
     event RaceSponsored(uint256 indexed raceId, uint256 raceEndTime, uint256[10] scores, uint256 winner);
     event BoonApplied(uint256 raceId, uint256 marbleId, uint256 points);
     event BaneApplied(uint256 raceId, uint256 marbleId, uint256 points);
@@ -105,6 +106,7 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
     // Betting and voting is closed, race starts
     function sponsorRace() public onlyOwner isOnPrepPhase {
         require(block.timestamp >= currentRace.endTime, "Prep phase is not over yet");
+        emit RaceSponsorStarted(currentRace.raceId, block.timestamp);
         
         // Apply effects
         for (uint256 i = 0; i < boonsBanes[raceCount].length; i++) {
@@ -196,7 +198,7 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
     /* Getter methods */ 
     function getLast10Races() public view returns (Race[10] memory) {
         Race[10] memory result;
-        uint256 counter = raceCount - 1;
+        uint256 counter = raceCount;
 
         for (uint256 i = 0; i < 10 && counter > 0; i++) {
             counter--;
