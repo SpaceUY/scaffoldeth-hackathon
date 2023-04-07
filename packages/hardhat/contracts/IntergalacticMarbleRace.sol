@@ -36,10 +36,7 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
     mapping(uint256 => Bet[]) public bets;
     mapping(uint256 => BoonOrBane[]) public boonsBanes;
 
-    uint256 public betCost = 1 ether;
-
     event BetPlaced(address indexed user, uint256 indexed raceId, uint256 amount, uint256 winner);
-    event VoteCast(address indexed user, uint256 indexed raceId);
     event RacePrepared(uint256 indexed raceId, uint256 prepEndTime);
     event RaceSponsorStarted(uint256 indexed raceId, uint256 raceStartTime);
     event RaceSponsored(uint256 indexed raceId, uint256 raceEndTime, uint256[10] scores, uint256 winner);
@@ -56,10 +53,6 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
         require(currentRace.endTime != 0, "No race is currently active");
         require(!currentRace.isCompleted, "Current race is completed");
         _;
-    }
-
-    function setBetCost(uint256 _newCost) public onlyOwner {
-        betCost = _newCost;
     }
 
     function getTokens() public {
@@ -93,7 +86,6 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
         currentRace = Race({
             raceId: raceCount,
             startTime: block.timestamp,
-            //endTime: block.timestamp + 5 minutes,
             endTime: block.timestamp + 1 minutes,
             marbles: [uint256(0), 0, 0, 0, 0, 0, 0, 0, 0, 0],
             isCompleted: false,
