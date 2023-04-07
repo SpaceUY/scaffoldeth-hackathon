@@ -50,6 +50,8 @@ export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }
 
   const handleBet = async () => {
     await placeBet.writeAsync();
+    setSelected(undefined);
+    setValueBet("");
   };
 
   const handleGetGALM = async () => {

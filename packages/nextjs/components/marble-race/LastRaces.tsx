@@ -1,64 +1,9 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
-import marble2 from "../../public/assets/blueball.png";
-import marble1 from "../../public/assets/greenball.png";
-import marble3 from "../../public/assets/violetball.png";
-import marble4 from "../../public/assets/whiteball.png";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import { marbles } from "~~/utils/marble-race";
 
 export const LastRaces = () => {
-  const marbles = [
-    {
-      id: 1,
-      name: "Green",
-      img: marble1,
-    },
-    {
-      id: 2,
-      name: "Green",
-      img: marble2,
-    },
-    {
-      id: 3,
-      name: "Green",
-      img: marble3,
-    },
-    {
-      id: 4,
-      name: "Green",
-      img: marble4,
-    },
-    {
-      id: 5,
-      name: "Green",
-      img: marble1,
-    },
-    {
-      id: 6,
-      name: "Green",
-      img: marble2,
-    },
-    {
-      id: 7,
-      name: "Green",
-      img: marble3,
-    },
-    {
-      id: 8,
-      name: "Green",
-      img: marble4,
-    },
-    {
-      id: 9,
-      name: "Green",
-      img: marble1,
-    },
-    {
-      id: 10,
-      name: "Green",
-      img: marble2,
-    },
-  ];
   const { data: last10Races } = useScaffoldContractRead({
     contractName: "IntergalacticMarbleRace",
     functionName: "getLast10Races",
@@ -78,7 +23,8 @@ export const LastRaces = () => {
         </caption>
         <thead>
           <tr>
-            <th scope="col">Marble img</th>
+            <th scope="col"></th>
+            <th scope="col">Marble name</th>
             <th scope="col">Marble number</th>
             <th scope="col">Total bets</th>
           </tr>
@@ -105,6 +51,7 @@ export const LastRaces = () => {
                       "Without image"
                     )}
                   </td>
+                  <td data-label="Number">{marble?.name}</td>
                   <td data-label="Number">{marble?.id}</td>
                   <td data-label="Bet">{race.totalBets.toNumber()}</td>
                 </tr>

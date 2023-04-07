@@ -2,14 +2,11 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import marble2 from "../public/assets/blueball.png";
-import marble1 from "../public/assets/greenball.png";
-import marble3 from "../public/assets/violetball.png";
-import marble4 from "../public/assets/whiteball.png";
 import type { NextPage } from "next";
 import Modal from "~~/components/Modal";
 import { MarbleRaceOwner, MarbleRacePlayers, PrepareRace } from "~~/components/marble-race";
 import { useAccountInfo, useModal, useScaffoldContractRead, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import { marbles } from "~~/utils/marble-race";
 
 type marble = {
   name: string;
@@ -27,59 +24,6 @@ const Game: NextPage = () => {
   const [winner, setWinner] = useState<marble>();
   const { account } = useAccountInfo();
   const { isOpen, toggle } = useModal();
-
-  const marbles = [
-    {
-      id: 1,
-      name: "Green",
-      img: marble1,
-    },
-    {
-      id: 2,
-      name: "Green",
-      img: marble2,
-    },
-    {
-      id: 3,
-      name: "Green",
-      img: marble3,
-    },
-    {
-      id: 4,
-      name: "Green",
-      img: marble4,
-    },
-    {
-      id: 5,
-      name: "Green",
-      img: marble1,
-    },
-    {
-      id: 6,
-      name: "Green",
-      img: marble2,
-    },
-    {
-      id: 7,
-      name: "Green",
-      img: marble3,
-    },
-    {
-      id: 8,
-      name: "Green",
-      img: marble4,
-    },
-    {
-      id: 9,
-      name: "Green",
-      img: marble1,
-    },
-    {
-      id: 10,
-      name: "Green",
-      img: marble2,
-    },
-  ];
 
   const { data: currentRace } = useScaffoldContractRead({
     contractName: "IntergalacticMarbleRace",
