@@ -20,6 +20,18 @@ interface PlayersType {
 export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }: PlayersType) => {
   const [valueBet, setValueBet] = useState<string | BigNumber>("");
 
+  const addBoon = useScaffoldContractWrite({
+    contractName: "IntergalacticMarbleRace",
+    functionName: "addBoon",
+    args: undefined,
+  });
+
+  const addBane = useScaffoldContractWrite({
+    contractName: "IntergalacticMarbleRace",
+    functionName: "addBane",
+    args: undefined,
+  });
+
   const placeBet = useScaffoldContractWrite({
     contractName: "IntergalacticMarbleRace",
     functionName: "placeBet",
@@ -42,6 +54,14 @@ export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }
 
   const handleGetGALM = async () => {
     await getTokens.writeAsync();
+  };
+
+  const handleAddBoon = async () => {
+    await addBoon.writeAsync();
+  };
+
+  const handleAddBane = async () => {
+    await addBane.writeAsync();
   };
 
   return (
@@ -113,6 +133,34 @@ export const MarbleRacePlayers = ({ marbles, selected, isStarting, setSelected }
             <span style={{ fontSize: "2.5em", color: "white" }}>
               <h1 className="block text-2xl font-bold" style={{ color: "white" }}>
                 Get 1000 GALM
+              </h1>
+            </span>
+          </div>
+          <div
+            className="flex flex-col px-10 py-3 text-center items-center max-w-xs rounded-3xl"
+            style={{
+              backgroundColor: "green",
+              cursor: "pointer",
+            }}
+            onClick={handleAddBoon}
+          >
+            <span style={{ fontSize: "2.5em", color: "white" }}>
+              <h1 className="block text-2xl font-bold" style={{ color: "white" }}>
+                Add Boon
+              </h1>
+            </span>
+          </div>
+          <div
+            className="flex flex-col px-10 py-3 text-center items-center max-w-xs rounded-3xl"
+            style={{
+              backgroundColor: "red",
+              cursor: "pointer",
+            }}
+            onClick={handleAddBane}
+          >
+            <span style={{ fontSize: "2.5em", color: "white" }}>
+              <h1 className="block text-2xl font-bold" style={{ color: "white" }}>
+                Add Bane
               </h1>
             </span>
           </div>
