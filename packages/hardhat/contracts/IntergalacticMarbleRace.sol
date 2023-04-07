@@ -195,7 +195,7 @@ contract IntergalacticMarbleRace is ERC20, Ownable {
         emit BetPlaced(msg.sender, raceCount, _amount, _marbleIndex);
     }
 
-    /* Getter methods */ 
+        /* Getter methods */ 
     function getLast10Races() public view returns (Race[10] memory) {
         Race[10] memory result;
         uint256 counter = raceCount;

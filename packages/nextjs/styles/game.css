@@ -9,70 +9,71 @@
     transform: scale(1.2);
 }
 .fade-in {
+    opacity: 1;
     animation: fadeIn 4s;
 }
 
 .fade-out {
     opacity: 0;
-    animation: fadeOut 4s;
+    animation: fadeOut 4s !important;
 }
 
-.marble-move-0 {
+.marble-move-0-fade-in {
     top: 0%;
     left: 10%;
     position: absolute;
     animation: moving-0 100s;
     
 }
-.marble-move-1 {
+.marble-move-1-fade-in {
     top: 0%;
     left: 35%;
     position: absolute;
     animation: moving-1 100s;
 }
-.marble-move-2 {
+.marble-move-2-fade-in {
     top: 0%;
     left: 70%;
     position: absolute;
     animation: moving-2 100s;
 }
-.marble-move-3 {
+.marble-move-3-fade-in {
     top: 20%;
     left: 94%;
     position: absolute;
     animation: moving-3 100s;
 }
-.marble-move-4 {
+.marble-move-4-fade-in {
     top: 65%;
     left: 94%;
     position: absolute;
     animation: moving-4 100s;
 }
-.marble-move-5 {
+.marble-move-5-fade-in {
     top: 90%;
     left: 65%;
     position: absolute;
     animation: moving-5 100s;
 }
-.marble-move-6 {
+.marble-move-6-fade-in {
     top: 90%;
     left: 45%;
     position: absolute;
     animation: moving-6 100s;
 }
-.marble-move-7 {
+.marble-move-7-fade-in {
     top: 90%;
     left: 15%;
     position: absolute;
     animation: moving-7 100s;
 }
-.marble-move-8 {
+.marble-move-8-fade-in {
     top: 75%;
     left: 0%;
     position: absolute;
     animation: moving-8 100s;
 }
-.marble-move-9 {
+.marble-move-9-fade-in {
     top: 35%;
     left: 0%;
     position: absolute;
@@ -94,6 +95,7 @@
     }
     to{
         opacity: 0;
+        display: none;
     }
 }
 @keyframes moving-0 {

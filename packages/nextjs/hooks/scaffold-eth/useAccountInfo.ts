@@ -11,7 +11,7 @@ export function useAccountInfo() {
 
   const account = {
     address,
-    isOwner: address === owner,
+    isOwner: address ? address === owner : false,
   };
 
   return { account };

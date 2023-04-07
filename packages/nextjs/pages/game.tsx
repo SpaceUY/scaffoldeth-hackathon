@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
@@ -6,21 +7,27 @@ import marble1 from "../public/assets/greenball.png";
 import marble3 from "../public/assets/violetball.png";
 import marble4 from "../public/assets/whiteball.png";
 import type { NextPage } from "next";
-import PrepareRace from "~~/components/PrepareRace";
-import Timer from "~~/components/Timer";
-import { useScaffoldContractWrite, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import Modal from "~~/components/Modal";
+import { MarbleRaceOwner, MarbleRacePlayers, PrepareRace } from "~~/components/marble-race";
+import { useAccountInfo, useModal, useScaffoldContractRead, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 type marble = {
   name: string;
   id: number;
+  img: any;
 };
 
 const Game: NextPage = () => {
   const [selected, setSelected] = useState<marble>();
-  const [isStarting, setIsStarting] = useState<boolean>();
+  const [isStarting, setIsStarting] = useState<boolean>(false);
+  const [startingTime, setStartingTime] = useState<number>(-2);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [winner, setWinner] = useState<number>();
-  console.log("winner: ", winner);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [isPrepared, setIsPrepared] = useState<boolean>(false);
+  const [winner, setWinner] = useState<marble>();
+  const { account } = useAccountInfo();
+  const { isOpen, toggle } = useModal();
+
   const marbles = [
     {
       id: 1,
@@ -73,44 +80,80 @@ const Game: NextPage = () => {
       img: marble2,
     },
   ];
-  // eslint-disable-next-line no-use-before-define
-  const { writeAsync, data } = useScaffoldContractWrite({
+
+  const { data: currentRace } = useScaffoldContractRead({
     contractName: "IntergalacticMarbleRace",
-    functionName: "sponsorRace", //prepareRace sponsorRace
-    args: undefined,
+    functionName: "currentRace",
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "IntergalacticMarbleRace",
+    eventName: "RaceSponsorStarted",
+    listener: () => {
+      setIsStarting(true);
+    },
   });
 
   useScaffoldEventSubscriber({
     contractName: "IntergalacticMarbleRace",
     eventName: "RaceSponsored",
     listener: (raceId, raceEndTime, scores, winner) => {
-      console.log(raceId, raceEndTime, scores, winner);
-      setWinner(parseInt(winner._hex, 16));
+      setTimeout(() => {
+        console.log("winner: ", winner);
+        setWinner(marbles.find(marble => marble.id === parseInt(winner._hex, 16)));
+        toggle();
+      }, 60000);
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "IntergalacticMarbleRace",
+    eventName: "RacePrepared",
+    listener: (raceId, prepEndTime) => {
+      console.log("prepEndTime: ", prepEndTime);
+      console.log("raceId: ", raceId);
+      setIsReady(true);
     },
   });
 
   useEffect(() => {
-    console.log("winner: ", winner);
-  }, [winner]);
-  useEffect(() => {
-    console.log({ data });
-    if (data) {
-      const dataAsync = async () => {
-        const resData = await data.wait();
-        console.log({ resData });
-      };
-      dataAsync();
-    }
-  }, [data]);
+    console.log("account: ", account);
+    console.log("game isOwner: ", isOwner);
+    if (account.address && account.isOwner) {
+      setIsOwner(account.isOwner);
+    } else setIsOwner(false);
+  }, [account, isOwner]);
 
-  const startRace = async () => {
-    const res = await writeAsync();
-    console.log("res: ", data);
-    console.log({ res });
+  useEffect(() => {
+    console.log("currentRace: ", currentRace);
+    if (currentRace && currentRace.endTime.toNumber() * 1000 !== 0) {
+      !currentRace?.isCompleted ? setIsReady(true) : null;
+      const endTime = new Date(currentRace.endTime.toNumber() * 1000);
+      if (endTime > Date.now()) {
+        console.log("prep time ending in:", Math.ceil((endTime - Date.now()) / 1000));
+        setStartingTime(Math.ceil((endTime - Date.now()) / 1000));
+      } else setStartingTime(-1);
+    } else {
+      setIsReady(false);
+    }
+  }, [currentRace]);
+
+  const finishRace = async () => {
+    try {
+      toggle();
+      setIsStarting(false);
+      setIsReady(false);
+      setWinner(undefined);
+      setStartingTime(-2);
+      setSelected(undefined);
+      setIsPrepared(false);
+    } catch (error) {
+      console.log("error: ", error);
+    }
   };
 
   if (!isReady) {
-    return <PrepareRace setIsReady={setIsReady} />;
+    return <PrepareRace isOwner={isOwner} />;
   }
 
   return (
@@ -126,60 +169,37 @@ const Game: NextPage = () => {
             <span className="block text-4xl font-bold">Game</span>
           </h1>
         </div>
+        {isOwner ? (
+          <MarbleRaceOwner
+            isPrepared={isPrepared}
+            isStarting={isStarting}
+            setIsPrepared={setIsPrepared}
+            setIsStarting={setIsStarting}
+            startingTime={startingTime}
+          />
+        ) : (
+          <MarbleRacePlayers isStarting={isStarting} marbles={marbles} selected={selected} setSelected={setSelected} />
+        )}
         <div className="flex-grow w-full mt-16 py-12 justify-center items-center">
-          <h1 className={`text-center mb-8 ${isStarting ? "fade-out" : ""}`}>
-            <span className="block text-2xl font-bold">Select your marble</span>
-          </h1>
-          <div
-            className={`flex justify-center bg-base-100 items-center gap-12 flex-col sm:flex-row ${
-              isStarting ? "fade-out" : ""
-            }`}
-            style={{ padding: "10px 0px" }}
-          >
-            {marbles.map((marble, index) => (
-              <Image
-                key={index}
-                src={marble.img}
-                alt="green-ball"
-                className={`${selected?.id === marble.id ? "selected" : ""} ${isStarting ? "fade-out" : ""} marble`}
-                onClick={() => setSelected(marble)}
-              />
-            ))}
-          </div>
-
           {isStarting &&
             marbles.map((marble, index) => (
-              <Image key={index} src={marble.img} alt="green-ball" className={`marble  marble-move-${index} fade-in`} />
+              <div key={index} className={`${winner && `fade-out`}`}>
+                <Image src={marble.img} alt={`${marble.id}`} className={`marble marble-move-${index}-fade-in `} />
+              </div>
             ))}
 
-          {isStarting && (
-            <div className="flex flex-col text-center items-center">
-              <Timer startingTime={3} colorText="#f5222d" />
-            </div>
-          )}
+          <Modal isOpen={isOpen} toggle={finishRace} height="50%" width="50%">
+            <h1 className="text-center mt-6">
+              <span className="block text-4xl font-bold">WINNER!</span>
+            </h1>
 
-          <div
-            className={`flex justify-center items-center gap-12 flex-col sm:flex-row ${isStarting ? "fade-out" : ""}`}
-            style={{ paddingTop: "5%" }}
-          >
-            <div
-              className="flex flex-col px-10 py-7 text-center items-center max-w-xs rounded-3xl"
-              style={{
-                backgroundColor: selected ? "#f5222d" : "#8c8c8c",
-                cursor: selected ? "pointer" : "not-allowed",
-              }}
-              onClick={() => {
-                if (selected) {
-                  startRace();
-                  setIsStarting(true);
-                }
-              }}
-            >
-              <span style={{ fontSize: "2.5em", color: "white" }}>
-                <Timer startingTime={60} colorText="white" />
-              </span>
+            <div className="flex items-center flex-col flex-grow pt-10">
+              <span className="block text-2xl font-bold">Marble number: {winner?.id}</span>
+              <div className="flex justify-center items-center gap-12 flex-col sm:flex-row py-8">
+                <Image src={winner?.img} alt="green-ball" className={`marble`} />
+              </div>
             </div>
-          </div>
+          </Modal>
         </div>
       </div>
     </>

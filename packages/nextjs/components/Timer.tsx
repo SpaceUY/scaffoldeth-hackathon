@@ -1,21 +1,35 @@
 import { useEffect, useState } from "react";
 
+type SetStateFunction<T> = React.Dispatch<React.SetStateAction<T>>;
+
 interface Props {
+  setIsFinish: SetStateFunction<boolean>;
   startingTime: number;
   colorText: string;
 }
 
-function Timer({ startingTime, colorText }: Props) {
+function Timer({ startingTime, colorText, setIsFinish }: Props) {
+  console.log("startingTime: ", startingTime);
   const [time, setTime] = useState<number>(startingTime);
+  console.log("-time: ", time);
 
   useEffect(() => {
+    console.log("time: ", time);
     const tick = () => {
       setTime(time - 1);
     };
-    if (time > -1) {
-      setTimeout(() => requestAnimationFrame(tick), 1000);
+    switch (time) {
+      case -1:
+        setIsFinish(true);
+        break;
+      case -2:
+        setTime(startingTime);
+        break;
+      default:
+        setTimeout(() => requestAnimationFrame(tick), 1000);
+        break;
     }
-  }, [time]);
+  }, [time, startingTime, setIsFinish]);
 
   return (
     <div>
